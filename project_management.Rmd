@@ -1,0 +1,57 @@
+---
+title: "Project Management"
+author: "Pam Fuhrmeister"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    keep_md: yes
+    number_sections: yes
+    # toc: yes
+    # toc_float: yes
+    theme: cosmo
+    df_print: kable
+---
+
+
+```{r setup, tidy=TRUE, message=FALSE, comment="", include=FALSE}
+library(tidyverse)
+library(ggthemes)
+
+knitr::opts_chunk$set(echo = TRUE)
+options(width=120)
+#theme_set(theme_few(base_size = 10))
+
+```
+
+```{r tidy=TRUE, message=FALSE, comment="", include=FALSE}
+
+gantt <- read.csv("current_projects.csv", h=T, sep = ";")
+
+g.gantt <- gather(gantt, "state", "date", 4:5) %>% 
+  mutate(date = as.Date(date, "%d.%m.%y"))
+
+
+```
+
+# Projects and timeline
+
+```{r fig.align="center", echo = FALSE, fig.width = 16}
+
+ggplot(g.gantt, aes(date, Project, color = Stage, group = Item)) +
+  geom_line(size = 10) +
+  labs(x="Date", y=NULL, title="Project timeline") + 
+  theme_bw() +
+  scale_x_date(date_labels="%b %y", date_breaks = "1 month") +
+  theme(
+    axis.text = element_text(size = 14),
+    axis.text.x = element_text(size = 14, angle = 45),
+    plot.title = element_text(size = 22),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 16),
+    axis.title.x = element_text(size = 14),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.minor.x = element_blank()
+    )
+
+```
